@@ -1,19 +1,21 @@
 package servers
 
 import (
-	"github.com/alohen/dynamic_configuration_manager/config_handeling"
+	"fmt"
 	"net/http"
-	"github.com/alohen/dynamic_configuration_manager/structs"
 	"reflect"
 	"strings"
-	"fmt"
+
+	"github.com/alohen/dynamic_configuration_manager/config_handeling"
+	"github.com/alohen/dynamic_configuration_manager/structs"
 )
 
-const(
-	ReadConfigPrefix = "/read/"
+const (
+	ReadConfigPrefix   = "/read/"
 	MissingConfigError = "No such config"
-	PageBuildingError = "Couldn't build page"
+	PageBuildingError  = "Couldn't build page"
 )
+
 type ConfigRetrieveServer struct {
 	ConfigLoader *config_handeling.ConfigLoader
 }
@@ -22,7 +24,7 @@ func (server *ConfigRetrieveServer) ServeHTTP(w http.ResponseWriter, r *http.Req
 	filePath := strings.TrimPrefix(r.URL.Path, ReadConfigPrefix)
 	config, err := server.ConfigLoader.LoadFile(filePath)
 	if err != nil {
-		http.Error(w, MissingConfigError,404)
+		http.Error(w, MissingConfigError, 404)
 		fmt.Println(err)
 		return
 	}
@@ -31,6 +33,7 @@ func (server *ConfigRetrieveServer) ServeHTTP(w http.ResponseWriter, r *http.Req
 	page, err := p.Serialize()
 	if err != nil {
 		http.Error(w, PageBuildingError, 500)
+		fmt.Println(err)
 		return
 	}
 
@@ -59,6 +62,13 @@ func createPage(object interface{}) *structs.Page {
 
 func getInputType(fieldType reflect.Type) string {
 	var inputType string
+
+	//var fieldKindToInputType [Kind]string
+
+	//fieldKindToInputType[reflect.Int] = "number"
+	//fieldKindToInputType[reflect.Int] = "number"
+	//fieldKindToInputType[reflect.Int] = "number"
+	//fieldKindToInputType[reflect.Int] = "number"
 
 	switch fieldType.Kind() {
 	case reflect.Int:

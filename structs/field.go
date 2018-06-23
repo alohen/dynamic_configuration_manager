@@ -3,13 +3,14 @@ package structs
 import (
 	"bytes"
 	"io/ioutil"
+	"log"
+	"os"
 	"path"
 	"text/template"
 )
 
 const (
-	fieldTemplate    = "templates\\field.html"
-	WorkingDirectory = "C:\\Users\\alohe\\go\\src\\github.com\\alohen\\dynamic_configuration_manager"
+	fieldTemplate = "templates\\field.html"
 )
 
 type Field struct {
@@ -23,7 +24,12 @@ type Fields []*Field
 func (field *Field) Serialize() (*string, error) {
 	var buffer bytes.Buffer
 
-	text, err := ioutil.ReadFile(path.Join(WorkingDirectory, fieldTemplate))
+	cwd, err := os.Getwd()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	text, err := ioutil.ReadFile(path.Join(cwd, fieldTemplate))
 	if err != nil {
 		return nil, err
 	}
@@ -58,8 +64,8 @@ func (fields Fields) Serialize() (*string, error) {
 
 func NewField(name, inputType string, inputValue interface{}) *Field {
 	return &Field{
-		Name: name,
-		InputType: inputType,
+		Name:       name,
+		InputType:  inputType,
 		InputValue: inputValue,
 	}
 }

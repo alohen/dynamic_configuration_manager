@@ -1,15 +1,15 @@
 # dynamic_configuration_manager
 
-this prgoram is a go server which dynamiclly builds GUI to edit configuration,
+This program is a Go server which dynamiclly builds GUI to edit configuration,
 according to it's Go struct fields. 
 
 !!this is only an alpha, and most things are not suppoerted yet!!
 
-For Example, for the following struct:
+For example, for the following struct:
 
 ![alt text](https://image.ibb.co/nsRPPo/struct.png)
 
-And The Following config: 
+And the following config: 
 
 ![alt text](https://image.ibb.co/k1WG4o/config.png)
 
