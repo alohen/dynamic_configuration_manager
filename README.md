@@ -18,7 +18,7 @@ If we request this config, which is located under the config floder, in the path
 ![alt text](https://image.ibb.co/k34sc8/ui.png)
 
 As seen in the GUI image, the numerical fields are already validated on client side, based only on the 
-face that the type of the field in the struct is numeric.
+fact that the type of the field in the struct is numeric.
 
 Features soon to come: 
 * editability of a struct field controlled by a tag 
