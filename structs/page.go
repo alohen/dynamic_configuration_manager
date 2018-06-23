@@ -2,12 +2,14 @@ package structs
 
 import (
 	"bytes"
+	"io/ioutil"
+	"log"
+	"os"
 	"path"
 	"text/template"
-	"io/ioutil"
 )
 
-const(
+const (
 	pageTemplate = "templates\\page.html"
 )
 
@@ -27,7 +29,7 @@ type serializeablePage struct {
 
 func NewPage(title, header, action string, fields []*Field) *Page {
 	return &Page{
-		Title: title,
+		Title:  title,
 		Header: header,
 		Action: action,
 		Fields: fields,
@@ -41,7 +43,7 @@ func (page *Page) Serialize() (*string, error) {
 	}
 
 	readyPage := serializeablePage{
-		Title: page.Title,
+		Title:  page.Title,
 		Header: page.Header,
 		Action: page.Action,
 		Fields: *serializedFields,
@@ -50,10 +52,15 @@ func (page *Page) Serialize() (*string, error) {
 	return readyPage.Serialize()
 }
 
-func(page *serializeablePage) Serialize() (*string, error) {
+func (page *serializeablePage) Serialize() (*string, error) {
 	var buffer bytes.Buffer
 
-	text, err := ioutil.ReadFile(path.Join(WorkingDirectory,pageTemplate))
+	cwd, err := os.Getwd()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	text, err := ioutil.ReadFile(path.Join(cwd, pageTemplate))
 	if err != nil {
 		return nil, err
 	}
@@ -63,7 +70,7 @@ func(page *serializeablePage) Serialize() (*string, error) {
 		return nil, err
 	}
 
-	err = tmpl.Execute(&buffer,*page)
+	err = tmpl.Execute(&buffer, *page)
 	if err != nil {
 		return nil, err
 	}
