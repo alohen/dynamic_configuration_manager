@@ -13,9 +13,9 @@ var (
 )
 
 type PersonConfig struct {
-	Name     string
-	SureName string
-	Age      int
+	Name    string
+	SurName string
+	Age     int
 }
 
 func (personConfig *PersonConfig) ParseConfig(config []byte) interface{} {
