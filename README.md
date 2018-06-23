@@ -7,7 +7,7 @@ according to it's Go struct fields.
 
 For Example, for the following struct:
 
-![alt text](https://image.ibb.co/gZxZqT/struct.png)
+![alt text](https://image.ibb.co/nsRPPo/struct.png)
 
 And The Following config: 
 
