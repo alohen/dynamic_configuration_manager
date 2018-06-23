@@ -2,9 +2,9 @@ package main
 
 import (
 	"net/http"
-	"dynamic_config_editor/config_handeling"
-	"dynamic_config_editor/structs"
-	"dynamic_config_editor/servers"
+	"github.com/alohen/dynamic_configuration_manager/config_handeling"
+	"github.com/alohen/dynamic_configuration_manager/structs"
+	"github.com/alohen/dynamic_configuration_manager/servers"
 	"log"
 )
 

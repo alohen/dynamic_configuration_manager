@@ -1,9 +1,9 @@
 package servers
 
 import (
-	"dynamic_config_editor/config_handeling"
+	"github.com/alohen/dynamic_configuration_manager/config_handeling"
 	"net/http"
-	"dynamic_config_editor/structs"
+	"github.com/alohen/dynamic_configuration_manager/structs"
 	"reflect"
 	"strings"
 	"fmt"

@@ -1,1 +1,5 @@
-{"Name":"Alon Hen","SureName":"Krokhmal","Age":19}
+{
+    "Name": "Alon Hen",
+    "SureName": "Krokhmal",
+    "Age": 19
+}

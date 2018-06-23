@@ -9,7 +9,7 @@ import (
 
 const (
 	fieldTemplate    = "templates\\field.html"
-	WorkingDirectory = "C:\\Users\\alohe\\go\\src\\dynamic_config_editor"
+	WorkingDirectory = "C:\\Users\\alohe\\go\\src\\github.com\\alohen\\dynamic_configuration_manager"
 )
 
 type Field struct {

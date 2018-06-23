@@ -3,8 +3,8 @@ package servers
 import (
 	"encoding/json"
 	"net/http"
-	"dynamic_config_editor/config_handeling"
-	"dynamic_config_editor/config_structs"
+	"github.com/alohen/dynamic_configuration_manager/config_handeling"
+	"github.com/alohen/dynamic_configuration_manager/config_structs"
 	"reflect"
 	"io/ioutil"
 	"path"

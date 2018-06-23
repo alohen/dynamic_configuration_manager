@@ -13,7 +13,7 @@ var (
 )
 
 type PersonConfig struct {
-	Name     string `validation:"int"`
+	Name     string
 	SureName string
 	Age      int
 }

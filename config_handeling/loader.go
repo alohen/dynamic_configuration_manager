@@ -1,7 +1,7 @@
 package config_handeling
 
 import (
-	"dynamic_config_editor/config_structs"
+	"github.com/alohen/dynamic_configuration_manager/config_structs"
 	"io/ioutil"
 	"path"
 	"fmt"
