@@ -33,6 +33,7 @@ func (server *ConfigRetrieveServer) ServeHTTP(w http.ResponseWriter, r *http.Req
 	page, err := p.Serialize()
 	if err != nil {
 		http.Error(w, PageBuildingError, 500)
+		fmt.Println(err)
 		return
 	}
 
