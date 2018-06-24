@@ -9,6 +9,10 @@ import (
 	"github.com/alohen/dynamic_configuration_manager/servers"
 )
 
+const(
+	resourcesDir = "/assets/"
+)
+
 func main() {
 	cwd, err := os.Getwd()
 	if err != nil {
@@ -18,7 +22,9 @@ func main() {
 	configLoader := config_handeling.ConfigLoader{WorkingDirectory: cwd}
 	retrieveServer := servers.ConfigRetrieveServer{ConfigLoader: &configLoader}
 	editServer := servers.ConfigEditingServer{ConfigLoader: &configLoader}
+	resourceServer := http.FileServer(http.Dir("assets"))
 
+	http.Handle(resourcesDir, http.StripPrefix(resourcesDir, resourceServer))
 	http.HandleFunc(servers.ReadConfigPrefix, retrieveServer.ServeHTTP)
 	http.HandleFunc(servers.EditingUrlPrefix, editServer.ServeHTTP)
 
