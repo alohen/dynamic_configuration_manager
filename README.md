@@ -15,7 +15,7 @@ And the following config:
 
 If we request this config, which is located under the config floder, in the path: "persons/alon" we will receive:
 
-![alt text](https://image.ibb.co/k34sc8/ui.png)
+![alt text](https://image.ibb.co/nhGLh8/image.png)
 
 As seen in the GUI image, the numerical fields are already validated on client side, based only on the 
 face that the type of the field in the struct is numeric.
