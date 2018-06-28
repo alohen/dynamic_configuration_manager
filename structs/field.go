@@ -10,7 +10,9 @@ import (
 )
 
 const (
-	fieldTemplate = "templates\\field.html"
+	// @CR:	Create resource loader for dynamically building paths (also,
+	//		use filepath.join for cross-platform-ness)
+	fieldTemplate = "assets\\templates\\field.html"
 )
 
 type Field struct {

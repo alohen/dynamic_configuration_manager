@@ -10,7 +10,7 @@ import (
 )
 
 const (
-	pageTemplate = "templates\\page.html"
+	pageTemplate = "assets\\templates\\page.html"
 )
 
 type Page struct {
