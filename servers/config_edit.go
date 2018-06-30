@@ -3,83 +3,51 @@
 package servers
 
 import (
-	"encoding/json"
 	"io/ioutil"
 	"net/http"
-	"os"
-	"path"
-	"reflect"
-	"github.com/alohen/dynamic_configuration_manager/config_handeling"
-	"github.com/alohen/dynamic_configuration_manager/example_config/structs"
+	"github.com/alohen/dynamic_configuration_manager/configuration/editor"
+	"github.com/alohen/dynamic_configuration_manager/configuration"
 )
 
 const (
 	EditingUrlPrefix = "/edit/"
-	ConfigEditError  = "Error editing example_config"
 )
 
 type ConfigEditingServer struct {
-	configLoader *config_handeling.ConfigLoader
+	configEditor *editor.ConfigEditor
 }
 
-func NewConfigEditingServer(configLoader *config_handeling.ConfigLoader) http.Handler {
+func NewConfigEditingServer(configEditor *editor.ConfigEditor) http.Handler {
 	return &ConfigEditingServer{
-		configLoader: configLoader,
+		configEditor: configEditor,
 	}
-}
-
-type ConfigEditCommand struct {
-	FileName       string
-	OriginalConfig interface{}
-	EditedConfig   interface{}
 }
 
 func (server *ConfigEditingServer) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	filePath := r.URL.Path
 
 	body, err := ioutil.ReadAll(r.Body)
-	defer r.Body.Close()
 	if err != nil {
 		http.Error(w, err.Error(), 500)
 		return
 	}
+	defer r.Body.Close()
 
-	parser := structs.GetParser(filePath)
-	if parser == nil {
-		http.Error(w, MissingConfigError, 404)
+	err = server.configEditor.EditConfiguration(filePath, body)
+	if err == nil {
+		w.WriteHeader(200)
 		return
 	}
 
-	config, err := server.configLoader.LoadFile(filePath)
-	if err != nil {
-		http.Error(w, MissingConfigError, 404)
-		return
+	switch err.(type) {
+	case configuration.ParsingError:
+		w.WriteHeader(404)
+	case configuration.EditingError:
+		w.WriteHeader(500)
+	default:
+		w.WriteHeader(500)
 	}
+	w.Write([]byte(err.Error()))
 
-	configEdit := parser.ParseConfig(body)
-	editedConfig := mergeConfigs(config, configEdit)
-
-	data, err := json.Marshal(editedConfig)
-	if err != nil {
-		http.Error(w, ConfigEditError, 500)
-		return
-	}
-
-	filePath = path.Join(server.configLoader.WorkingDirectory, config_handeling.ConfigPath, filePath)
-	ioutil.WriteFile(filePath, data, os.ModePerm)
-}
-
-func mergeConfigs(originalConfig, EditedConfig interface{}) interface{} {
-	config := reflect.ValueOf(originalConfig).Elem()
-	editFields := reflect.ValueOf(EditedConfig).Elem()
-
-	for i := 0; i < editFields.NumField(); i++ {
-		originalField := config.Field(i)
-		editField := editFields.Field(i)
-		if editFields.Field(i).Interface() != reflect.Zero(editFields.Field(i).Type()).Interface() {
-			originalField.Set(reflect.ValueOf(editField.Interface()))
-		}
-	}
-
-	return config.Interface()
+	return
 }

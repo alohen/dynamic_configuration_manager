@@ -1,4 +1,4 @@
-package config_handeling
+package configuration
 
 import (
 	"github.com/alohen/dynamic_configuration_manager/example_config/structs"
@@ -6,17 +6,21 @@ import (
 	"path"
 	"fmt"
 )
-const(
-	ConfigPath = "example_config\\configuration"
-)
 
 type ConfigLoader struct {
 	WorkingDirectory string
+	ConfigPath string
 }
 
+func NewConfigLoader(workingDirectory, configPath string) *ConfigLoader {
+	return &ConfigLoader{
+		WorkingDirectory: workingDirectory,
+		ConfigPath: configPath,
+	}
+}
 func (loader *ConfigLoader) LoadFile(filePath string) (interface{}, error ) {
 	var parsedConfig interface{} = nil
-	data, err := ioutil.ReadFile(path.Join(loader.WorkingDirectory,ConfigPath,filePath))
+	data, err := ioutil.ReadFile(path.Join(loader.WorkingDirectory,loader.ConfigPath,filePath))
 	if err != nil {
 		return nil, err
 	}

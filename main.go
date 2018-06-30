@@ -5,12 +5,14 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/alohen/dynamic_configuration_manager/config_handeling"
+	"github.com/alohen/dynamic_configuration_manager/configuration"
 	"github.com/alohen/dynamic_configuration_manager/servers"
+	"github.com/alohen/dynamic_configuration_manager/configuration/editor"
 )
 
 const(
 	resourcesDir = "/assets/"
+	ConfigPath = "example_config\\configuration"
 )
 
 func main() {
@@ -19,9 +21,10 @@ func main() {
 		log.Panic(err)
 	}
 
-	configLoader := config_handeling.ConfigLoader{WorkingDirectory: cwd}
-	retrieveServer := servers.NewConfigReadingServer(&configLoader)
-	editServer := servers.NewConfigEditingServer(&configLoader)
+	configLoader := configuration.NewConfigLoader(cwd,ConfigPath)
+	configEditor := editor.NewConfigEditor(configLoader)
+	retrieveServer := servers.NewConfigReadingServer(configLoader)
+	editServer := servers.NewConfigEditingServer(configEditor)
 	resourceServer := http.FileServer(http.Dir("assets"))
 
 	http.Handle(resourcesDir, http.StripPrefix(resourcesDir, resourceServer))

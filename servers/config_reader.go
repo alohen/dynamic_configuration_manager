@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"net/http"
 	"reflect"
-	"github.com/alohen/dynamic_configuration_manager/config_handeling"
+	"github.com/alohen/dynamic_configuration_manager/configuration"
 	"github.com/alohen/dynamic_configuration_manager/structs"
 )
 
@@ -15,10 +15,10 @@ const (
 )
 
 type ConfigRetrieveServer struct {
-	configLoader *config_handeling.ConfigLoader
+	configLoader *configuration.ConfigLoader
 }
 
-func NewConfigReadingServer(configLoader *config_handeling.ConfigLoader) http.Handler {
+func NewConfigReadingServer(configLoader *configuration.ConfigLoader) http.Handler {
 	return &ConfigRetrieveServer{
 		configLoader: configLoader,
 	}
