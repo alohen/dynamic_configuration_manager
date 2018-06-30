@@ -4,25 +4,28 @@ import (
 	"fmt"
 	"net/http"
 	"reflect"
-	"strings"
-
 	"github.com/alohen/dynamic_configuration_manager/config_handeling"
 	"github.com/alohen/dynamic_configuration_manager/structs"
 )
 
 const (
 	ReadConfigPrefix   = "/read/"
-	MissingConfigError = "No such config"
+	MissingConfigError = "No such example_config"
 	PageBuildingError  = "Couldn't build page"
 )
 
 type ConfigRetrieveServer struct {
-	ConfigLoader *config_handeling.ConfigLoader
+	configLoader *config_handeling.ConfigLoader
 }
 
+func NewConfigReadingServer(configLoader *config_handeling.ConfigLoader) http.Handler {
+	return &ConfigRetrieveServer{
+		configLoader: configLoader,
+	}
+}
 func (server *ConfigRetrieveServer) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	filePath := strings.TrimPrefix(r.URL.Path, ReadConfigPrefix)
-	config, err := server.ConfigLoader.LoadFile(filePath)
+	filePath := r.URL.Path
+	config, err := server.configLoader.LoadFile(filePath)
 	if err != nil {
 		http.Error(w, MissingConfigError, 404)
 		fmt.Println(err)

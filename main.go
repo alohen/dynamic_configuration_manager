@@ -20,13 +20,13 @@ func main() {
 	}
 
 	configLoader := config_handeling.ConfigLoader{WorkingDirectory: cwd}
-	retrieveServer := servers.ConfigRetrieveServer{ConfigLoader: &configLoader}
-	editServer := servers.ConfigEditingServer{ConfigLoader: &configLoader}
+	retrieveServer := servers.NewConfigReadingServer(&configLoader)
+	editServer := servers.NewConfigEditingServer(&configLoader)
 	resourceServer := http.FileServer(http.Dir("assets"))
 
 	http.Handle(resourcesDir, http.StripPrefix(resourcesDir, resourceServer))
-	http.HandleFunc(servers.ReadConfigPrefix, retrieveServer.ServeHTTP)
-	http.HandleFunc(servers.EditingUrlPrefix, editServer.ServeHTTP)
+	http.Handle(servers.ReadConfigPrefix, http.StripPrefix(servers.ReadConfigPrefix, retrieveServer))
+	http.Handle(servers.EditingUrlPrefix, http.StripPrefix(servers.EditingUrlPrefix, editServer))
 
 	hostAndPort := "localhost:8080"
 	log.Printf("Trying to run server from %s on %s\n", cwd, hostAndPort)

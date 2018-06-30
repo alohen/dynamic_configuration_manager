@@ -10,19 +10,23 @@ import (
 	"os"
 	"path"
 	"reflect"
-	"strings"
-
 	"github.com/alohen/dynamic_configuration_manager/config_handeling"
-	"github.com/alohen/dynamic_configuration_manager/config_structs"
+	"github.com/alohen/dynamic_configuration_manager/example_config/structs"
 )
 
 const (
 	EditingUrlPrefix = "/edit/"
-	ConfigEditError  = "Error editing config"
+	ConfigEditError  = "Error editing example_config"
 )
 
 type ConfigEditingServer struct {
-	ConfigLoader *config_handeling.ConfigLoader
+	configLoader *config_handeling.ConfigLoader
+}
+
+func NewConfigEditingServer(configLoader *config_handeling.ConfigLoader) http.Handler {
+	return &ConfigEditingServer{
+		configLoader: configLoader,
+	}
 }
 
 type ConfigEditCommand struct {
@@ -32,7 +36,7 @@ type ConfigEditCommand struct {
 }
 
 func (server *ConfigEditingServer) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	filePath := strings.TrimPrefix(r.URL.Path, EditingUrlPrefix)
+	filePath := r.URL.Path
 
 	body, err := ioutil.ReadAll(r.Body)
 	defer r.Body.Close()
@@ -41,14 +45,14 @@ func (server *ConfigEditingServer) ServeHTTP(w http.ResponseWriter, r *http.Requ
 		return
 	}
 
-	parser := config_structs.GetParser(filePath)
+	parser := structs.GetParser(filePath)
 	if parser == nil {
 		http.Error(w, MissingConfigError, 404)
 		fmt.Println("Fail 1")
 		return
 	}
 
-	config, err := server.ConfigLoader.LoadFile(filePath)
+	config, err := server.configLoader.LoadFile(filePath)
 	if err != nil {
 		http.Error(w, MissingConfigError, 404)
 		fmt.Println("Fail 2")
@@ -64,7 +68,7 @@ func (server *ConfigEditingServer) ServeHTTP(w http.ResponseWriter, r *http.Requ
 		return
 	}
 
-	filePath = path.Join(server.ConfigLoader.WorkingDirectory, config_handeling.ConfigPath, filePath)
+	filePath = path.Join(server.configLoader.WorkingDirectory, config_handeling.ConfigPath, filePath)
 	ioutil.WriteFile(filePath, data, os.ModePerm)
 }
 
