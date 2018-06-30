@@ -1,13 +1,13 @@
 package config_handeling
 
 import (
-	"github.com/alohen/dynamic_configuration_manager/config_structs"
+	"github.com/alohen/dynamic_configuration_manager/example_config/structs"
 	"io/ioutil"
 	"path"
 	"fmt"
 )
 const(
-	ConfigPath = "config"
+	ConfigPath = "example_config\\configuration"
 )
 
 type ConfigLoader struct {
@@ -21,7 +21,7 @@ func (loader *ConfigLoader) LoadFile(filePath string) (interface{}, error ) {
 		return nil, err
 	}
 
-	parser := config_structs.GetParser(filePath)
+	parser := structs.GetParser(filePath)
 	if parser == nil {
 		return nil, fmt.Errorf("No Parser found for file: %v ", filePath)
 	}

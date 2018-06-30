@@ -1,4 +1,4 @@
-package config_structs
+package structs
 
 import (
 	"encoding/json"
