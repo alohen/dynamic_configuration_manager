@@ -4,7 +4,6 @@ package servers
 
 import (
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"net/http"
 	"os"
@@ -48,14 +47,12 @@ func (server *ConfigEditingServer) ServeHTTP(w http.ResponseWriter, r *http.Requ
 	parser := structs.GetParser(filePath)
 	if parser == nil {
 		http.Error(w, MissingConfigError, 404)
-		fmt.Println("Fail 1")
 		return
 	}
 
 	config, err := server.configLoader.LoadFile(filePath)
 	if err != nil {
 		http.Error(w, MissingConfigError, 404)
-		fmt.Println("Fail 2")
 		return
 	}
 
