@@ -10,6 +10,12 @@ type PageBuilder struct {
 	configLoader *configuration.ConfigLoader
 }
 
+func NewEditingPageBuilder(loader *configuration.ConfigLoader) *PageBuilder {
+	return &PageBuilder{
+		configLoader: loader,
+	}
+}
+
 func (builder *PageBuilder) BuildEditingPage(configurationPath string) ([]byte, error) {
 	config, err := builder.configLoader.LoadFile(configurationPath)
 	if err != nil {
@@ -45,26 +51,9 @@ func createPage(object interface{}) *structs.Page {
 }
 
 func getInputType(fieldType reflect.Type) string {
-	var inputType string
-
-	//var fieldKindToInputType [Kind]string
-
-	//fieldKindToInputType[reflect.Int] = "number"
-	//fieldKindToInputType[reflect.Int] = "number"
-	//fieldKindToInputType[reflect.Int] = "number"
-	//fieldKindToInputType[reflect.Int] = "number"
-
-	switch fieldType.Kind() {
-	case reflect.Int:
-		inputType = "number"
-	case reflect.Uint:
-		inputType = "number"
-	case reflect.Float32:
-		inputType = "number"
-	case reflect.Float64:
-		inputType = "number"
-	default:
-		inputType = "text"
+	inputType, exists := fieldKindToInputType[fieldType.Kind().String()]
+	if !exists {
+		return DefaultInputType
 	}
 
 	return inputType
