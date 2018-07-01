@@ -8,6 +8,7 @@ import (
 	"github.com/alohen/dynamic_configuration_manager/configuration"
 	"github.com/alohen/dynamic_configuration_manager/servers"
 	"github.com/alohen/dynamic_configuration_manager/configuration/editor"
+	"github.com/alohen/dynamic_configuration_manager/configuration/page_builder"
 )
 
 const(
@@ -23,7 +24,9 @@ func main() {
 
 	configLoader := configuration.NewConfigLoader(cwd,ConfigPath)
 	configEditor := editor.NewConfigEditor(configLoader)
-	retrieveServer := servers.NewConfigReadingServer(configLoader)
+	editingPageBuilder := page_builder.NewEditingPageBuilder(configLoader)
+
+	retrieveServer := servers.NewConfigReadingServer(editingPageBuilder)
 	editServer := servers.NewConfigEditingServer(configEditor)
 	resourceServer := http.FileServer(http.Dir("assets"))
 
