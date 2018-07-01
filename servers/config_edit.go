@@ -34,20 +34,21 @@ func (server *ConfigEditingServer) ServeHTTP(w http.ResponseWriter, r *http.Requ
 	defer r.Body.Close()
 
 	err = server.configEditor.EditConfiguration(filePath, body)
-	if err == nil {
-		w.WriteHeader(200)
+	if err != nil {
+		http.Error(w,err.Error(),server.getStatusCodeByError(err))
 		return
 	}
 
+	w.WriteHeader(200)
+}
+
+func (server *ConfigEditingServer) getStatusCodeByError(err error) int {
 	switch err.(type) {
 	case configuration.ParsingError:
-		w.WriteHeader(404)
+		return http.StatusNotFound
 	case configuration.EditingError:
-		w.WriteHeader(500)
+		return http.StatusInternalServerError
 	default:
-		w.WriteHeader(500)
+		return http.StatusInternalServerError
 	}
-	w.Write([]byte(err.Error()))
-
-	return
 }
