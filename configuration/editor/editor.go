@@ -44,7 +44,7 @@ func (editor *ConfigEditor) EditConfiguration(configPath string, configEdit []by
 func (editor *ConfigEditor) parseEditedConfig(configPath string, configEdit []byte) (interface{}, error) {
 	parser := structs.GetParser(configPath)
 	if parser == nil {
-		return nil, configuration.NewParsingError(fmt.Errorf("Parser not found for config file: %v", configPath))
+		return nil, configuration.NewParsingError(fmt.Errorf("parser not found for config file: %v", configPath))
 	}
 
 	editedConfig := parser.ParseConfig(configEdit)
