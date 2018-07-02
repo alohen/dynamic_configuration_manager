@@ -23,7 +23,7 @@ type Field struct {
 
 type Fields []*Field
 
-func (field *Field) Serialize() (*string, error) {
+func (field *Field) Serialize() ([]byte, error) {
 	var buffer bytes.Buffer
 
 	cwd, err := os.Getwd()
@@ -46,22 +46,22 @@ func (field *Field) Serialize() (*string, error) {
 		return nil, err
 	}
 
-	htmlElement := buffer.String()
-	return &htmlElement, nil
+	htmlElement := buffer.Bytes()
+	return htmlElement, nil
 }
 
-func (fields Fields) Serialize() (*string, error) {
+func (fields Fields) Serialize() ([]byte, error) {
 	var buffer bytes.Buffer
 	for _, field := range fields {
 		htmlField, err := field.Serialize()
 		if err != nil {
 			return nil, err
 		}
-		buffer.WriteString(*htmlField)
+		buffer.Write(htmlField)
 	}
 
-	htmlFields := buffer.String()
-	return &htmlFields, nil
+	htmlFields := buffer.Bytes()
+	return htmlFields, nil
 }
 
 func NewField(name, inputType string, inputValue interface{}) *Field {

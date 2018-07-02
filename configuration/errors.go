@@ -27,3 +27,17 @@ func NeweditingError(err error) EditingError {
 func (err EditingError) Error() string {
 	return err.Error()
 }
+
+type PageBuildingError struct {
+	err error
+}
+
+func NewPageBuildingError(err error) PageBuildingError {
+	return PageBuildingError{
+		err: err,
+	}
+}
+
+func (err PageBuildingError) Error() string {
+	return err.Error()
+}
