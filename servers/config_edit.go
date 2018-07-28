@@ -64,7 +64,7 @@ func (server *ConfigEditingServer) ServeHTTP(w http.ResponseWriter, r *http.Requ
 		return
 	}
 
-	filePath = path.Join(server.ConfigLoader.WorkingDirectory, config_handeling.ConfigPath, filePath)
+	filePath = path.Join(server.ConfigLoader.ConfigDirectory, config_handeling.ConfigPath, filePath)
 	ioutil.WriteFile(filePath, data, os.ModePerm)
 }
 

@@ -3,23 +3,31 @@ package main
 import (
 	"log"
 	"net/http"
-	"os"
+	"path/filepath"
 
 	"github.com/alohen/dynamic_configuration_manager/config_handeling"
 	"github.com/alohen/dynamic_configuration_manager/servers"
+	kingpin "gopkg.in/alecthomas/kingpin.v2"
 )
 
-const(
+const (
 	resourcesDir = "/assets/"
 )
 
+var (
+	configDirectory   = kingpin.Arg("confdir", "Directory of configuration.").Required().String()
+	serverHostAndPort = kingpin.Flag("server", "Server host+port to listen on.").Short('s').Default("localhost:8080").String()
+)
+
 func main() {
-	cwd, err := os.Getwd()
+	kingpin.Parse()
+
+	absConfigDirectory, err := filepath.Abs(*configDirectory)
 	if err != nil {
 		log.Panic(err)
 	}
 
-	configLoader := config_handeling.ConfigLoader{WorkingDirectory: cwd}
+	configLoader := config_handeling.ConfigLoader{ConfigDirectory: absConfigDirectory}
 	retrieveServer := servers.ConfigRetrieveServer{ConfigLoader: &configLoader}
 	editServer := servers.ConfigEditingServer{ConfigLoader: &configLoader}
 	resourceServer := http.FileServer(http.Dir("assets"))
@@ -28,9 +36,8 @@ func main() {
 	http.HandleFunc(servers.ReadConfigPrefix, retrieveServer.ServeHTTP)
 	http.HandleFunc(servers.EditingUrlPrefix, editServer.ServeHTTP)
 
-	hostAndPort := "localhost:8080"
-	log.Printf("Trying to run server from %s on %s\n", cwd, hostAndPort)
-	err = http.ListenAndServe(hostAndPort, nil)
+	log.Printf("Trying to run server from %s on %s\n", absConfigDirectory, *serverHostAndPort)
+	err = http.ListenAndServe(*serverHostAndPort, nil)
 	if err != nil {
 		log.Fatal(err)
 	}
