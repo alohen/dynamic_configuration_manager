@@ -36,7 +36,7 @@ func NewPage(title, header, action string, fields []*Field) *Page {
 	}
 }
 
-func (page *Page) Serialize() (*string, error) {
+func (page *Page) Serialize() ([]byte, error) {
 	serializedFields, err := page.Fields.Serialize()
 	if err != nil {
 		return nil, err
@@ -46,13 +46,13 @@ func (page *Page) Serialize() (*string, error) {
 		Title:  page.Title,
 		Header: page.Header,
 		Action: page.Action,
-		Fields: *serializedFields,
+		Fields: string(serializedFields),
 	}
 
 	return readyPage.Serialize()
 }
 
-func (page *serializeablePage) Serialize() (*string, error) {
+func (page *serializeablePage) Serialize() ([]byte, error) {
 	var buffer bytes.Buffer
 
 	cwd, err := os.Getwd()
@@ -75,6 +75,6 @@ func (page *serializeablePage) Serialize() (*string, error) {
 		return nil, err
 	}
 
-	htmlElement := buffer.String()
-	return &htmlElement, nil
+	htmlElement := buffer.Bytes()
+	return htmlElement, nil
 }

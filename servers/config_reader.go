@@ -1,87 +1,42 @@
 package servers
 
 import (
-	"fmt"
 	"net/http"
-	"reflect"
-	"strings"
-
-	"github.com/alohen/dynamic_configuration_manager/config_handeling"
-	"github.com/alohen/dynamic_configuration_manager/structs"
+	"github.com/alohen/dynamic_configuration_manager/configuration/page_builder"
+	"github.com/alohen/dynamic_configuration_manager/configuration"
 )
 
 const (
 	ReadConfigPrefix   = "/read/"
-	MissingConfigError = "No such config"
-	PageBuildingError  = "Couldn't build page"
 )
 
 type ConfigRetrieveServer struct {
-	ConfigLoader *config_handeling.ConfigLoader
+	editingPageBuilder *page_builder.PageBuilder
 }
 
-func (server *ConfigRetrieveServer) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	filePath := strings.TrimPrefix(r.URL.Path, ReadConfigPrefix)
-	config, err := server.ConfigLoader.LoadFile(filePath)
-	if err != nil {
-		http.Error(w, MissingConfigError, 404)
-		fmt.Println(err)
-		return
+func NewConfigReadingServer(editingPageBuilder *page_builder.PageBuilder) http.Handler {
+	return &ConfigRetrieveServer{
+		editingPageBuilder: editingPageBuilder,
 	}
-
-	p := createPage(config)
-	page, err := p.Serialize()
+}
+func (server *ConfigRetrieveServer) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	filePath := r.URL.Path
+	page, err := server.editingPageBuilder.BuildEditingPage(filePath)
 	if err != nil {
-		http.Error(w, PageBuildingError, 500)
-		fmt.Println(err)
-		return
+		http.Error(w,err.Error(),server.getStatusCodeByError(err))
 	}
 
 	w.WriteHeader(200)
-	w.Write([]byte(*page))
+	w.Write(page)
 }
 
-func createPage(object interface{}) *structs.Page {
-	objectValue := reflect.ValueOf(object).Elem()
-	objectType := reflect.Indirect(reflect.ValueOf(object)).Type()
-	pageFields := structs.Fields{}
-
-	for index := 0; objectType.NumField() > index; index++ {
-		structField := objectType.Field(index)
-		pageField := structs.NewField(
-			structField.Name,
-			getInputType(structField.Type),
-			objectValue.Field(index).Interface())
-
-		pageFields = append(pageFields, pageField)
-	}
-
-	page := structs.NewPage(objectType.Name(), objectType.Name(), "return sendForm()", pageFields)
-	return page
-}
-
-func getInputType(fieldType reflect.Type) string {
-	var inputType string
-
-	//var fieldKindToInputType [Kind]string
-
-	//fieldKindToInputType[reflect.Int] = "number"
-	//fieldKindToInputType[reflect.Int] = "number"
-	//fieldKindToInputType[reflect.Int] = "number"
-	//fieldKindToInputType[reflect.Int] = "number"
-
-	switch fieldType.Kind() {
-	case reflect.Int:
-		inputType = "number"
-	case reflect.Uint:
-		inputType = "number"
-	case reflect.Float32:
-		inputType = "number"
-	case reflect.Float64:
-		inputType = "number"
+func (server *ConfigRetrieveServer) getStatusCodeByError(err error) int {
+	switch err.(type) {
+	case configuration.ParsingError:
+		return http.StatusInternalServerError
+	case configuration.PageBuildingError:
+		return http.StatusNotFound
 	default:
-		inputType = "text"
+		return http.StatusNotFound
 	}
-
-	return inputType
 }
