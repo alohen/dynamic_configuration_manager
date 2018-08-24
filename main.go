@@ -14,7 +14,6 @@ import (
 
 const(
 	resourcesDir = "/assets/"
-	//ConfigPath = "example_config\\configuration"
 )
 
 var(
