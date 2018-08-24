@@ -72,7 +72,7 @@ func (editor *ConfigEditor) writeConfig(configPath string, config interface{}) e
 		return err
 	}
 
-	filePath := path.Join(editor.configLoader.WorkingDirectory, editor.configLoader.ConfigPath, configPath)
+	filePath := path.Join(editor.configLoader.ConfigPath, configPath)
 	ioutil.WriteFile(filePath, data, os.ModePerm)
 
 	return nil
