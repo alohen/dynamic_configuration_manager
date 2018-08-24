@@ -4,19 +4,20 @@ import (
 	"log"
 	"net/http"
 	"path/filepath"
+
 	kingpin "gopkg.in/alecthomas/kingpin.v2"
 
 	"github.com/alohen/dynamic_configuration_manager/configuration"
-	"github.com/alohen/dynamic_configuration_manager/servers"
 	"github.com/alohen/dynamic_configuration_manager/configuration/editor"
 	"github.com/alohen/dynamic_configuration_manager/configuration/page_builder"
+	"github.com/alohen/dynamic_configuration_manager/servers"
 )
 
-const(
+const (
 	resourcesDir = "/assets/"
 )
 
-var(
+var (
 	configDirectory   = kingpin.Arg("confdir", "Directory of configuration.").Required().String()
 	serverHostAndPort = kingpin.Flag("server", "Server host+port to listen on.").Short('s').Default("localhost:8080").String()
 )
@@ -40,9 +41,8 @@ func main() {
 	http.Handle(servers.ReadConfigPrefix, http.StripPrefix(servers.ReadConfigPrefix, retrieveServer))
 	http.Handle(servers.EditingUrlPrefix, http.StripPrefix(servers.EditingUrlPrefix, editServer))
 
-	hostAndPort := "localhost:8080"
 	log.Printf("Trying to run server from %s on %s\n", absConfigDirectory, *serverHostAndPort)
-	err = http.ListenAndServe(hostAndPort, nil)
+	err = http.ListenAndServe(*serverHostAndPort, nil)
 	if err != nil {
 		log.Fatal(err)
 	}
