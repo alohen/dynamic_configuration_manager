@@ -12,15 +12,14 @@ type ConfigLoader struct {
 	ConfigPath string
 }
 
-func NewConfigLoader(workingDirectory, configPath string) *ConfigLoader {
+func NewConfigLoader(configPath string) *ConfigLoader {
 	return &ConfigLoader{
-		WorkingDirectory: workingDirectory,
 		ConfigPath: configPath,
 	}
 }
 func (loader *ConfigLoader) LoadFile(filePath string) (interface{}, error ) {
 	var parsedConfig interface{} = nil
-	data, err := ioutil.ReadFile(path.Join(loader.WorkingDirectory,loader.ConfigPath,filePath))
+	data, err := ioutil.ReadFile(path.Join(loader.ConfigPath,filePath))
 	if err != nil {
 		return nil, err
 	}
