@@ -8,7 +8,6 @@ import (
 )
 
 type ConfigLoader struct {
-	WorkingDirectory string
 	ConfigPath string
 }
 
